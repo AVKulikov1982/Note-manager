@@ -1,0 +1,87 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  {% block title %}
+  <title>Notes</title>
+  {% endblock title %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+  <script src="{% static 'js/main.js' %}"></script>
+</head>
+<body>
+
+  <div class="container-xl header_container">
+    <div class="row header flex">
+      <h1 class="col-xl title">Менеджер заметок</h1>
+    </div>
+    <div class="row header flex">
+      <div class="col-xl-6 flex">
+        {% if request.user.is_authenticated %}
+          <div style="display: flex;">
+            {% if request.user.is_superuser %}
+              <div style="margin-right: 5px;">
+                <button class="btn"><a href="admin">{% trans "Админка" %}</a></button>
+              </div>
+            {% endif %}
+            {#            <div style="margin-right: 5px;">#}
+            {#              <button class="btn"><a href="/profile/{{ request.user.id }}">{% trans "Личный кабинет" %}</a></button>#}
+            {#            </div>#}
+            <div>
+              <button class="btn"><a href="/logout">{% trans "Выйти" %}</a></button>
+            </div>
+          </div>
+        {% else %}
+          <div style="display: flex;">
+            <div style="margin-right: 5px;">
+              <button class="btn"><a href="/registration">{% trans "Регистрация" %}</a></button>
+            </div>
+            <div>
+              <button class="btn"><a href="/login">{% trans "Войти" %}</a></button>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-xl-6 flex">
+
+        {% block menu %}
+
+          {% if request.user.is_authenticated %}
+            <div style="display: flex; margin-left: auto">
+              <div class="btn" style="margin-right: 5px;"><a href="/api/tasks?responsible={{ request.user.id }}">МОИ ЗАМЕТКИ</a></div>
+              <button class="btn"><a href="/add_note">+ Добавить заметку</a></button>
+            </div>
+          {% endif %}
+
+        {% endblock menu %}
+
+      </div>
+    </div>
+    <div class="row header flex">
+      <form method="post" id="filter" class="flex" action="/" class="col-xl-12">
+        {% csrf_token %}
+        <object type="image/svg+xml" data="searche.svg"><img src="/static/svg/searche.svg"></object>
+        {{ task_filter_form.task_filter }}
+      </form>
+      <div id="filter_dropdown" class="is-published">
+      <div class="filter_dropdown-header flex">
+        <div class="dropdown">
+          <button class="btn"><a href="/api/tasks?status=3">категории</a></button>
+          <button class="btn"><a href="/api/tasks?status=2">избранные</a></button>
+          <button class="btn"><a href="/api/tasks?status=1">избранные</a></button>
+        </div>
+        <div id="close">
+          <object type="image/svg+xml" data="close.svg"><img src="/static/svg/close.svg"></object>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <div class="container-xl container">
+
+  </div>
+</body>
+</html>
