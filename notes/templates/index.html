@@ -26,9 +26,9 @@
                 <button class="btn"><a href="admin">{% trans "Админка" %}</a></button>
               </div>
             {% endif %}
-            {#            <div style="margin-right: 5px;">#}
-            {#              <button class="btn"><a href="/profile/{{ request.user.id }}">{% trans "Личный кабинет" %}</a></button>#}
-            {#            </div>#}
+              <div style="margin-right: 5px;">
+                <button class="btn"><a href="/profile/{{ request.user.id }}">{% trans "Личный кабинет" %}</a></button>
+              </div>
             <div>
               <button class="btn"><a href="/logout">{% trans "Выйти" %}</a></button>
             </div>

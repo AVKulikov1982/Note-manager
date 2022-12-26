@@ -1,0 +1,9 @@
+{% load i18n %}
+<div id="text_content">
+<h2>{% trans "Страница входа" %}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn" type="submit">{% trans "Логин" %}</button>
+</form>
+</div>
