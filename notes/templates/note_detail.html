@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<div style="display: flex; justify-content: center; padding: 15px;">
+  <div class="note_card" style="width: auto">
+    <h1  class="note_title" >{{ object.title }}</h1>
+    <p class="note_descr">{{ object.descr }}</p>
+    <p class="note_descr">{{ object.created_at }}</p>
+    <p class="note_descr">{{ object.category }}</p>
+    {% if object.select %}
+    <p class="note_descr">избранная</p>
+    {% endif %}
+    <button class="btn"><a href="{% url 'update_note' object.id %}">{% trans "Редактировать" %}</a></button>
+    <button class="btn"><a href="{% url 'delete_note' object.id %}">{% trans "Удалить" %}</a></button>
+  </div>
+</div>
+{% endblock content %}

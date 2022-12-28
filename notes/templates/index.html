@@ -9,6 +9,7 @@
   {% endblock title %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="{% static 'js/main.js' %}"></script>
 </head>
 <body>
@@ -18,12 +19,13 @@
       <h1 class="col-xl title">Менеджер заметок</h1>
     </div>
     <div class="row header flex">
+
       <div class="col-xl-6 flex">
         {% if request.user.is_authenticated %}
           <div style="display: flex;">
             {% if request.user.is_superuser %}
               <div style="margin-right: 5px;">
-                <button class="btn"><a href="admin">{% trans "Админка" %}</a></button>
+                <button class="btn"><a href="/admin">{% trans "Админка" %}</a></button>
               </div>
             {% endif %}
               <div style="margin-right: 5px;">
@@ -39,49 +41,59 @@
               <button class="btn"><a href="/registration">{% trans "Регистрация" %}</a></button>
             </div>
             <div>
-              <button class="btn"><a href="/login">{% trans "Войти" %}</a></button>
+<!--              <button class="btn"><a href="/login">{% trans "Войти" %}</a></button>-->
+              <button class="btn"><a href="{% url 'ajaxlogin' %}">{% trans "Войти" %}</a></button>
             </div>
           </div>
         {% endif %}
       </div>
 
       <div class="col-xl-6 flex">
-
-        {% block menu %}
-
           {% if request.user.is_authenticated %}
             <div style="display: flex; margin-left: auto">
-              <div class="btn" style="margin-right: 5px;"><a href="/api/tasks?responsible={{ request.user.id }}">МОИ ЗАМЕТКИ</a></div>
-              <button class="btn"><a href="/add_note">+ Добавить заметку</a></button>
+              <div class="btn" style="margin-right: 5px;"><a href="{% url 'list_notes' %}">МОИ ЗАМЕТКИ</a></div>
+              <button class="btn"><a href="{% url 'add_note' %}">+ Добавить заметку</a></button>
             </div>
           {% endif %}
+      </div>
+    </div>
+    {% if request.user.is_authenticated %}
+    <div class="row header flex">
+      <div class="col-xl-6 flex">
 
-        {% endblock menu %}
+            <div>
+              <div style="margin-bottom: 10px; margin-top: 10px;"><b>сортировать по:</b></div>
+              <button class="btn"><a href="{% url 'list_notes_with_param' param='sort_by_date' %}">дате создания</a></button>
+              <button class="btn"><a href="{% url 'list_notes_with_param' param='sort_by_category' %}">категории</a></button>
+              <button class="btn"><a href="{% url 'list_notes_with_param' param='sort_by_select' %}">по признаку избранная</a></button>
+            </div>
 
       </div>
     </div>
     <div class="row header flex">
-      <form method="post" id="filter" class="flex" action="/" class="col-xl-12">
-        {% csrf_token %}
-        <object type="image/svg+xml" data="searche.svg"><img src="/static/svg/searche.svg"></object>
-        {{ task_filter_form.task_filter }}
-      </form>
-      <div id="filter_dropdown" class="is-published">
-      <div class="filter_dropdown-header flex">
-        <div class="dropdown">
-          <button class="btn"><a href="/api/tasks?status=3">категории</a></button>
-          <button class="btn"><a href="/api/tasks?status=2">избранные</a></button>
-          <button class="btn"><a href="/api/tasks?status=1">избранные</a></button>
-        </div>
-        <div id="close">
-          <object type="image/svg+xml" data="close.svg"><img src="/static/svg/close.svg"></object>
-        </div>
+      <div class="col-xl-12 flex">
+
+            <div class="col-xl-6 flex">
+              <form class="col-xl-6" method="post" action="{% url 'list_notes_with_param' param='filter' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="col-xl-12" style="margin-bottom: 10px; margin-top: 10px;"><b>фильтр по:</b></div>
+              <div class="flex" style="margin-bottom: 10px;">{% trans "дата создания" %} - {{ filter_form.created_at }}</div>
+              <div class="flex" style="margin-bottom: 10px;">{% trans "заголовок" %} - {{ filter_form.title }}</div>
+              <div class="flex" style="margin-bottom: 10px;">{% trans "категория" %} - {{ filter_form.category }}</div>
+              <div class="flex" style="margin-bottom: 10px;">{% trans "избранная" %} - {{ filter_form.select }}</div>
+              <button class="btn" type="submit">Фильтр</button>
+              </form>
+            </div>
+
       </div>
     </div>
-    </div>
+     {% endif %}
   </div>
-  <div class="container-xl container">
 
+  <div class="container-xl container">
+    {% block content %}
+    {% endblock content %}
   </div>
+
 </body>
 </html>

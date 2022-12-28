@@ -1,0 +1,15 @@
+﻿{% load i18n %}
+
+{% block content %}
+<div id="text_content">
+  <h2>{% trans "Редактирование" %}</h2>
+    <form method="post" action="{% url 'update_note' pk%}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <p>{% trans "заголовок" %} - {{ note_form.title }}</p>
+      <p>{% trans "содержимое" %} - {{ note_form.descr }}</p>
+      <p>{% trans "категория" %} - {{ note_form.category }}</p>
+      <p>{% trans "избранная" %} - {{ note_form.select }}</p>
+      <button class="btn" type="submit">{% trans "Редактировать" %}</button>
+    </form>
+</div>
+{% endblock content %}

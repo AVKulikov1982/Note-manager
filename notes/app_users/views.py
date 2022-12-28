@@ -8,12 +8,40 @@ from django.views import generic, View
 from django.utils.translation import gettext_lazy as _
 from .models import Profile
 from .forms import RegisterForm, UpdateProfileForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.http import JsonResponse
 
 
 class UserLoginView(LoginView):
 	template_name = 'login.html'
 
 
+class AjaxUserLoginView(View):
+	
+	def get(self, request):
+		form = AuthenticationForm()
+		return render(request, template_name='login.html', context={'form': form})
+	
+	
+	def post(self, request):
+		
+		username = request.POST.get('username')
+		password = request.POST.get('password')
+		
+		if username and password:
+			user = authenticate(username=username, password=password)
+			if user:
+				login(request, user)
+				return JsonResponse(data={'status': 200}, status=200)
+			return JsonResponse(
+				data={'error': 'Пароль и логин не валидные'},
+				status=400
+			)
+		return JsonResponse(
+				data={'error': 'Введите пароль и логин'},
+				status=400
+			)
+		
 class UserLogoutView(LogoutView):
 	template_name = 'logout.html'
 
